@@ -1,0 +1,19 @@
+---
+# defaults file for format-and-mount-disks
+disk_list:
+  - sdc
+  - sdd
+  - sde
+  - sdf
+  - sdg
+  - sdh
+  - sdi
+  - sdj
+  - sdk
+  - sdl
+  - sdm
+  - sdn
+  - sdo
+  - sdp
+  - sdq
+  - sdr

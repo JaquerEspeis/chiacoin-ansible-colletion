@@ -1,0 +1,78 @@
+---
+# tasks file for chia-miner-install
+
+- name: Update all
+  package:
+    name: '*'
+    state: latest
+
+- name: Install Dependencies
+  package:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - wget
+    - epel-release
+    - gcc
+    - openssl-devel
+    - bzip2-devel
+    - libffi
+    - libffi-devel
+    - libsqlite3x-devel
+
+- name: Install the 'Development tools' package group
+  yum:
+    name: "@Development tools"
+    state: present
+
+- name: create directory
+  ansible.builtin.file:
+    path: /opt/chia/
+    state: directory
+
+- name: create python temp build dir
+  ansible.builtin.file:
+    path: /tmp/python
+    state: directory
+
+- name: Download
+  ansible.builtin.unarchive:
+    src: https://www.python.org/ftp/python/3.7.7/Python-3.7.7.tgz
+    dest: /tmp/python
+    remote_src: yes
+
+- name: ./configure python 3.7
+  ansible.builtin.command: "./configure --enable-optimizations"
+  args:
+    chdir: /tmp/python/Python-3.7.7
+
+- name: make  python 3.7
+  ansible.builtin.command: "make  altinstall"
+  args:
+    chdir: /tmp/python/Python-3.7.7
+
+- name: Clone a repo
+  ansible.builtin.git:
+    repo: https://github.com/Chia-Network/chia-blockchain.git
+    version: tags/{{ release_version }}
+    dest: /opt/chia/chia-blockchain
+
+- name: Install chia
+  ansible.builtin.command: "sh install.sh"
+  args:
+    chdir: /opt/chia/chia-blockchain
+
+- name: Insert/Update chia environment to root home
+  blockinfile:
+    path: ~/.bashrc
+    marker: "# Code added by chia miner role"
+    block: |
+      if [ -f /opt/chia/chia-blockchain/activate ]; then
+        . /opt/chia/chia-blockchain/activate
+      fi
+
+
+- name: Create chia systemd service file
+  template:
+    src: templates/chia.service.j2
+    dest: /lib/systemd/system/chia.service

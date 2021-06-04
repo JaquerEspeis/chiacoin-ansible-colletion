@@ -1,0 +1,15 @@
+[Unit]
+Description=Start chia farmer
+
+Wants=network.target
+After=syslog.target network-online.target
+
+[Service]
+Type=simple
+ExecStart=/opt/chia/chia-blockchain/venv/bin/chia start farmer
+Restart=on-failure
+RestartSec=10
+KillMode=process
+
+[Install]
+WantedBy=multi-user.target

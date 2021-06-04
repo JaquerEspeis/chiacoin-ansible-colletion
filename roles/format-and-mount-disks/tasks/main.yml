@@ -1,0 +1,21 @@
+---
+# tasks file for format-and-mount-disks
+- name: Recursively create mount directories
+  ansible.builtin.file:
+    path: /disks/{{ item }}
+    state: directory
+  loop: "{{ disk_list }}"
+
+- name: Create a XFS filesystem on the disks
+  community.general.filesystem:
+    fstype: xfs
+    dev: /dev/{{ item }}
+  loop: "{{ disk_list }}"
+
+- name: Mount disks
+  mount:
+    path: /disks/{{ item }}
+    src: /dev/{{ item }}
+    fstype: xfs
+    state: mounted
+  loop: "{{ disk_list }}"

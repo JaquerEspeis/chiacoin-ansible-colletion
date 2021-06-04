@@ -1,0 +1,7 @@
+---
+- name: Converge
+  hosts: all
+  tasks:
+    - name: "Include format-and-mount-disks"
+      include_role:
+        name: "format-and-mount-disks"
