@@ -71,8 +71,10 @@
         . /opt/chia/chia-blockchain/activate
       fi
 
-
 - name: Create chia systemd service file
   template:
     src: templates/chia.service.j2
     dest: /lib/systemd/system/chia.service
+  notify:
+    - Enable chia
+    - Restart chia

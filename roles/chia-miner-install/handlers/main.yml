@@ -1,2 +1,11 @@
 ---
 # handlers file for chia-miner-install
+- name: Enable chia
+  ansible.builtin.service:
+    name: chia
+    state: enabled
+
+- name: Restart chia
+  ansible.builtin.service:
+    name: chia
+    state: restarted
